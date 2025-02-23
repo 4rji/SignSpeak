@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SignSpeaks - ASL Translator</title>
+    <style>
+        :root {
+            --primary-color: #FF7B5F;
+            --background-color: #FFF5F3;
+            --text-color: #4A3226;
+        }
+
+        /* Add new logo styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .logo-icon {
+            background: var(--primary-color);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-text {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .video-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #video {
+            transform: scaleX(-1);
+        }
+
+        #canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform: scaleX(-1);
+        }
+
+        .text-container {
+            width: 100%;
+            max-width: 640px;
+            text-align: center;
+        }
+
+        #output {
+            min-height: 50px;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 24px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #words {
+            font-size: 32px;
+            margin: 20px;
+            padding: 15px;
+            border: 2px solid #333;
+            min-height: 50px;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        .gesture-guide {
+            margin: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .gesture-guide h2 {
+            margin-bottom: 10px;
+        }
+
+        .gesture-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .gesture-item {
+            background: var(--background-color);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #eee;
+        }
+
+        .image-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M14 7c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1s.45-1 1-1h6c.55 0 1 .45 1 1zm1 9h-8c-.55 0-1-.45-1-1s.45-1 1-1h8c.55 0 1 .45 1 1s-.45 1-1 1zm4-4h-4c-.55 0-1-.45-1-1s.45-1 1-1h4c.55 0 1 .45 1 1s-.45 1-1 1z"/>
+                </svg>
+            </div>
+            <span class="logo-text">SignSpeak</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="video-container">
+            <video id="video" width="640" height="480" autoplay playsinline></video>
+            <canvas id="canvas" width="640" height="480"></canvas>
+        </div>
+        <div class="text-container">
+            <div id="output">Starting camera...</div>
+            <div id="words"></div>
+            <button id="clear">Clear</button>
+        </div>
+        <div class="gesture-guide">
+            <h2>ASL Alphabet Guide</h2>
+            <div class="gesture-list">
+                <div class="gesture-item">A - Closed fist with thumb on side</div>
+                <div class="gesture-item">B - Flat hand, fingers together</div>
+                <div class="gesture-item">C - Curved hand in C shape</div>
+                <div class="gesture-item">D - Index up, thumb and middle touching</div>
+                <div class="gesture-item">E - Fingers curled, thumb tucked</div>
+                <div class="gesture-item">F - Thumb and index touching, others up</div>
+                <div class="gesture-item">G - Index points out, thumb parallel</div>
+                <div class="gesture-item">H - Index and middle out parallel</div>
+                <div class="gesture-item">I - Pinky up, others closed</div>
+                <div class="gesture-item">J - Pinky up, draw J in air</div>
+                <div class="gesture-item">K - Index up, middle angled, thumb between</div>
+                <div class="gesture-item">L - L shape with index and thumb</div>
+                <div class="gesture-item">M - Three fingers over thumb</div>
+                <div class="gesture-item">N - Two fingers over thumb</div>
+                <div class="gesture-item">O - Fingers curved into O</div>
+                <div class="gesture-item">P - Index points down, thumb out</div>
+                <div class="gesture-item">Q - Index down, thumb side</div>
+                <div class="gesture-item">R - Crossed fingers</div>
+                <div class="gesture-item">S - Fist with thumb over fingers</div>
+                <div class="gesture-item">T - Index between thumb and middle</div>
+                <div class="gesture-item">U - Two fingers up together</div>
+                <div class="gesture-item">V - Peace sign</div>
+                <div class="gesture-item">W - Three fingers up</div>
+                <div class="gesture-item">X - Hook index finger</div>
+                <div class="gesture-item">Y - Thumb and pinky out</div>
+                <div class="gesture-item">Z - Draw Z with index</div>
+            </div>
+        </div>
+        <div class="image-container">
+            <h2>ASL Reference Guide</h2>
+            <img src="./ccc.png" alt="ASL Words Reference" />
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.7/dist/handpose.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+    <script src="renderer.js"></script>
+</body>
+</html> 

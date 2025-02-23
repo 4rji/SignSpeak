@@ -1,0 +1,30 @@
+{
+  "name": "signspeaks-asl-translator",
+  "version": "1.0.0",
+  "description": "ASL Translator using hand gestures",
+  "main": "main.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@tensorflow-models/handpose": "^0.1.0",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.22.0",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "electron": "^25.9.8",
+    "electron-builder": "^24.13.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manshor-Sadat/SignSpeaks-ASL-Translator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Manshor-Sadat/SignSpeaks-ASL-Translator/issues"
+  },
+  "homepage": "https://github.com/Manshor-Sadat/SignSpeaks-ASL-Translator#readme"
+}
