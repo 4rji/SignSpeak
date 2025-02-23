@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>SignSpeaks - ASL Translator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #FF7B5F;
@@ -44,7 +45,7 @@
         body {
             background-color: var(--background-color);
             color: var(--text-color);
-            font-family: 'Arial', sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 20px;
         }
@@ -120,10 +121,11 @@
         }
 
         .gesture-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             padding: 15px;
+            justify-content: center;
         }
 
         .gesture-item {
@@ -150,6 +152,12 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+
+        .title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -163,7 +171,8 @@
             <span class="logo-text">SignSpeak</span>
         </div>
     </div>
-
+    <h1 class="title">Do you want to practice the alphabet?</h1>
+    
     <div class="container">
         <div class="video-container">
             <video id="video" width="640" height="480" autoplay playsinline></video>
@@ -205,9 +214,7 @@
                 <div class="gesture-item">Z - Draw Z with index</div>
             </div>
         </div>
-        <div class="image-container">
-            <h2>ASL Reference Guide</h2>
-            <img src="./ccc.png" alt="ASL Words Reference" />
+
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
