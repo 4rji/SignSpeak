@@ -8,6 +8,7 @@ let hands;
 let camera;
 
 const TOL = 0.12;
+const FINGER_SPREAD_TOL = 0.15;
 const LETTER_TIMEOUT = 1500;
 
 let isDetecting = true; // Variable para controlar la detección
@@ -198,9 +199,18 @@ const ASL_GESTURES = {
         const palm = landmarks[0];
         const index = landmarks[8];
         const middle = landmarks[12];
-        return index.y < palm.y &&
-               middle.y < palm.y &&
-               Math.abs(index.x - middle.x) > TOL;
+        const ring = landmarks[16];
+        const pinky = landmarks[20];
+        
+        const fingersExtended = index.y < palm.y - TOL && 
+                               middle.y < palm.y - TOL;
+        
+        const fingersDown = ring.y > palm.y - TOL && 
+                           pinky.y > palm.y - TOL;
+        
+        const properSpread = Math.abs(index.x - middle.x) > FINGER_SPREAD_TOL;
+        
+        return fingersExtended && fingersDown && properSpread;
     },
     'W': (landmarks) => {
         const palm = landmarks[0];
@@ -266,34 +276,31 @@ function onResults(results) {
             const color = letter ? '#00FF00' : '#FF0000';
             drawHand(landmarks, color);
 
-            if (letter && isDetecting) { // Solo detectar si isDetecting es true
-                isDetecting = false; // Desactivar detección
+            if (letter && isDetecting) {
                 const currentTime = Date.now();
-                if (!lastDetectedTimes[index] || currentTime - lastDetectedTimes[index] > LETTER_TIMEOUT) {
-                    letterBuffers[index] = letter;
-                } else if (!letterBuffers[index].endsWith(letter)) {
-                    letterBuffers[index] += letter;
+                
+                if (!lastDetectedTimes[index] || 
+                    currentTime - lastDetectedTimes[index] > LETTER_TIMEOUT) {
+                    
+                    if (currentTime - lastDetectedTimes[index] > LETTER_TIMEOUT * 2) {
+                        letterBuffers[index] = '';
+                    }
+                    
+                    if (!letterBuffers[index] || 
+                        letterBuffers[index].charAt(letterBuffers[index].length - 1) !== letter) {
+                        letterBuffers[index] = (letterBuffers[index] || '') + letter;
+                    }
                 }
+                
                 lastDetectedTimes[index] = currentTime;
-
-                const matchedWord = KNOWN_WORDS.find(word => word.startsWith(letterBuffers[index]));
-                if (matchedWord && letterBuffers[index] === matchedWord) {
-                    words.textContent += matchedWord + ' ';
-                    letterBuffers[index] = '';
-                    output.textContent = `✓ Palabra detectada: ${matchedWord}`;
-                    output.style.color = '#00AA00';
-                } else if (matchedWord) {
-                    output.textContent = `Formando: ${letterBuffers[index]} → ${matchedWord}?`;
-                    output.style.color = '#0000AA';
-                } else {
-                    output.textContent = `Letra detectada: ${letter} | Buffer: ${letterBuffers[index]}`;
-                    output.style.color = '#000000';
-                }
-
-                // Pausa de 1 segundo antes de permitir la detección de la siguiente letra
+                isDetecting = false;
+                
+                output.textContent = `Letra actual: ${letter} | Buffer: ${letterBuffers[index]}`;
+                output.style.color = '#000000';
+                
                 setTimeout(() => {
-                    isDetecting = true; // Reactivar detección después de 1 segundo
-                }, 1000);
+                    isDetecting = true;
+                }, 500);
             }
         });
     } else {
@@ -366,8 +373,8 @@ async function init() {
         hands.setOptions({
             maxNumHands: 1,
             modelComplexity: 1,
-            minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7,
             selfieMode: true
         });
         hands.onResults(onResults);
